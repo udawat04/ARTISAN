@@ -1,0 +1,146 @@
+/* Navbar.css */
+.custom-navbar {
+  background-color: whitesmoke;
+  color: black;
+  position: relative;
+}
+
+.nav-links {
+  list-style-type: none;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.nav-item {
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.nav-item:hover {
+  background-color: #E9A401;
+}
+
+.navbar-dropdown {
+  position: absolute;
+  top: 80%;
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.dropdown-section {
+  flex: 1 1 20%;
+  min-width: 200px;
+  padding: 10px;
+}
+
+.dropdown-section h3 {
+  margin-bottom: 10px;
+  font-size: 20px;
+  color: #007bff;
+  font-weight: bolder;
+}
+
+.dropdown-section ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dropdown-section ul li {
+  margin: 5px 0;
+  cursor: pointer;
+}
+
+.dropdown-section ul li:hover {
+  text-decoration: underline;
+}
+
+.dropdown-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.image-card {
+  text-align: center;
+  flex: 1 1 30%;
+  min-width: 225px;
+  padding: 1rem;
+}
+
+.image-card img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.image-card p {
+  margin: 10px 0 5px;
+  font-size: 14px;
+}
+
+.image-card a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.image-card a:hover {
+  text-decoration: underline;
+}
+
+/* Additional styles to improve the overall appearance */
+.navbar-toggler {
+  border: none;
+}
+
+.navbar-toggler:focus,
+.navbar-toggler:active {
+  outline: none;
+  box-shadow: none;
+}
+
+.navbar-collapse {
+  justify-content: center;
+}
+
+.navbar-nav .nav-link {
+  color: black;
+  font-weight: bold;
+  padding: 10px 15px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+
+/* Responsive styles */
+@media (min-width: 992px) {
+  .navbar-dropdown {
+    position: absolute;
+    width: auto;
+    padding: 10px 0px;
+    
+  }
+
+  .dropdown-section,
+  .image-card {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+
+  .dropdown-images {
+    flex-direction: row-reverse;
+    align-items: center;
+    flex-wrap: nowrap;
+  }
+
+  .image-card {
+    margin-bottom: 10px;
+  }
+
+}
