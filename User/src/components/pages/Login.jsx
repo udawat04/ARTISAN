@@ -6,7 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { isAuthenticate, setAuthenticate, login } = useAuth();
+  const {  setAuthenticate, login } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -40,10 +40,10 @@ const Login = () => {
           if (data.status === 200) {
             console.log("User data:", data);
             login(data.user); // Setting the user object in context
-            console.log("login",login)
+            console.log("login", login);
             setAuthenticate(true);
-            localStorage.setItem("accessToken", data.accessToken);  
-            localStorage.setItem("user",data.user)
+            localStorage.setItem("accessToken", data.accessToken);
+            localStorage.setItem("userId", data.user._id); // Store user ID in local storage
 
             navigate("/wishlist");
           } else {
@@ -126,7 +126,7 @@ const Login = () => {
                   <div className="mt-2">
                     <input
                       className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                      type="password"
+                      type="Password"
                       placeholder="Password"
                       name="password"
                       onChange={(ev) => handleChange(ev)}

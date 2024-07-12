@@ -7,7 +7,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "mdb-react-ui-kit/dist/css/mdb.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import DataProvider from "./context/DataProvider";
-import { AuthProvider } from "./context/AuthContext";
 <link
   href="https://fonts.googleapis.com/css?family=Cinzel Decorative"
   rel="stylesheet"
@@ -15,13 +14,9 @@ import { AuthProvider } from "./context/AuthContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
-    <DataProvider>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </DataProvider>
-  </React.StrictMode>
+  <DataProvider>
+    <App />
+  </DataProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

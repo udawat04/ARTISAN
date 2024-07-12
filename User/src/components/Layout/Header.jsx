@@ -9,14 +9,15 @@ import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 function Header() {
-  const navigate =useNavigate();
-  const { isAuthenticate, setAuthenticate } = useAuth();
-  console.log("auth",isAuthenticate)
-  const onHandleLogout=()=>{
-    setAuthenticate(false);
-    localStorage.removeItem("accessToken");
+  const navigate = useNavigate();
+  const { isAuthenticate, logout } = useAuth();
+  
+
+  const handleLogout = () => {
+    logout();
     navigate("/");
-  }
+  };
+
   return (
     <>
       <div className="navbar-top">
@@ -46,13 +47,11 @@ function Header() {
 
         <div>
           <Nav className="ml-auto">
-           
-              <LinkContainer to="/wishlist">
-                <Nav.Link>
-                  <MDBIcon className="me mdn-icon" icon="heart" size="lg" />
-                </Nav.Link>
-              </LinkContainer>
-            
+            <LinkContainer to="/wishlist">
+              <Nav.Link>
+                <MDBIcon className="me mdn-icon" icon="heart" size="lg" />
+              </Nav.Link>
+            </LinkContainer>
             <LinkContainer to="/ShoppingCart">
               <Nav.Link>
                 <MDBIcon
@@ -63,15 +62,13 @@ function Header() {
               </Nav.Link>
             </LinkContainer>
             {isAuthenticate ? (
-              <LinkContainer to="/" onClick={() => onHandleLogout()}>
-                <Nav.Link>
-                  <MDBIcon
-                    className="me-2 mdb-icon"
-                    icon="sign-in-alt"
-                    size="lg"
-                  />
-                </Nav.Link>
-              </LinkContainer>
+              <Nav.Link onClick={handleLogout}>
+                <MDBIcon
+                  className="me-2 mdb-icon"
+                  icon="sign-in-alt"
+                  size="lg"
+                />
+              </Nav.Link>
             ) : (
               <LinkContainer to="/login">
                 <Nav.Link>

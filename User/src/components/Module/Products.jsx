@@ -4,26 +4,38 @@ import { Link } from "react-router-dom";
 import { MDBIcon } from "mdbreact";
 import { useAuth } from "../../context/AuthContext";
 
-const Products = ({ handleAddToWishlist }) => {
+const Products = () => {
   const { user } = useAuth();
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:4000/products", {
-      method: "GET",
-    })
-      .then((res) => res.json())
-      .then((data) => setProducts(data))
-      .catch((error) => console.log(error));
+    console.log(user, 'user');
+     fetch("http://localhost:4000/products", {
+       method: "GET",
+     })
+       .then((res) => res.json())
+       .then((data) => setProducts(data))
+       .catch((error) => console.log(error));
+    if (user && user?._id) {
+     
 
-    fetch(`http://localhost:4000/getCartItems/${user._id}`, {
-      method: "GET",
-    })
-      .then((res) => res.json())
-      .then((data) => setCart(data))
-      .catch((error) => console.log(error));
-  }, [user._id]);
+      fetch(`http://localhost:4000/getCartItems/${user._id}`, {
+        method: "GET",
+      })
+        .then((res) => res.json())
+        .then((data) => setCart(data))
+        .catch((error) => console.log(error));
+
+      fetch(`http://localhost:4000/getWishlist/${user._id}`, {
+        method: "GET",
+      })
+        .then((res) => res.json())
+        .then((data) => setWishlist(data))
+        .catch((error) => console.log(error));
+    }
+  }, [user]);
 
   const handleAddToCart = (productId) => {
     fetch("http://localhost:4000/addToCart", {
@@ -32,7 +44,7 @@ const Products = ({ handleAddToWishlist }) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        userId: user,
+        userId: user._id,
         productId,
         quantity: 1,
       }),
@@ -44,8 +56,50 @@ const Products = ({ handleAddToWishlist }) => {
       .catch((error) => console.log(error));
   };
 
+  const handleAddToWishlist = (productId) => {
+    fetch("http://localhost:4000/addToWishlist", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: user._id,
+        productId,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setWishlist([...wishlist, data]);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const handleRemoveFromWishlist = (productId) => {
+    fetch("http://localhost:4000/removeFromWishlist", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: user._id,
+        productId,
+      }),
+    })
+      .then((res) => res.json())
+      .then(() => {
+        setWishlist(
+          wishlist.filter((item) => item.productId._id !== productId)
+        );
+      })
+      .catch((error) => console.log(error));
+  };
+
   const isProductInCart = (productId) => {
     return cart.some((item) => item.productId._id === productId);
+  };
+
+  const isProductInWishlist = (productId) => {
+    return wishlist.some((item) => item.productId._id === productId);
   };
 
   return (
@@ -74,9 +128,31 @@ const Products = ({ handleAddToWishlist }) => {
                       </Button>
                     </Link>
                   )}
-                  <Link to="/wishlist" className="btn mx-1">
-                    <MDBIcon className="me mdn-icon" icon="heart" size="lg" />
-                  </Link>
+                  {isProductInWishlist(item._id) ? (
+                    <Button
+                      onClick={() => handleRemoveFromWishlist(item._id)}
+                      className="btn mx-1 text-danger"
+                    >
+                      <MDBIcon
+                        className="me mdn-icon"
+                        fas
+                        icon="heart"
+                        size="lg"
+                      />
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => handleAddToWishlist(item._id)}
+                      className="btn mx-1 text-secondary"
+                    >
+                      <MDBIcon
+                        className="me mdn-icon"
+                        far
+                        icon="heart"
+                        size="lg"
+                      />
+                    </Button>
+                  )}
                 </Card.Body>
               </Card>
             </Col>

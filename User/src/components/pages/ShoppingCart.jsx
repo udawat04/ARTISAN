@@ -14,19 +14,42 @@ import {
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { getCurrentUser } from "../../utils/common";
 
 export default function QuantityEdit() {
-  const { user } = useAuth();
   const [cartItems, setCartItems] = useState([]);
+  const [currentUser, setCurrentUser] = useState();
+  useEffect(() => {
+    async function getUser() {
+      const data = await getCurrentUser();
+      setCurrentUser(data);
+    }
+    getUser();
+  }, []);
+
+  // useEffect(() => {
+  //   // Fetch wishlist items from the backend
+  //   fetch(`http://localhost:4000/user/profile`, {
+  //     method: "GET",
+  //     headers: {
+  //       authorization: `Beader ${localStorage.getItem("accessToken")}`,
+  //     },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((data) => setCurrentUser(data.user))
+  //     .catch((error) => console.log("Error fetching wishlist:", error));
+  // }, []);
 
   useEffect(() => {
-    fetch(`http://localhost:4000/getCartItems/${user._id}`, {
-      method: "GET",
-    })
-      .then((res) => res.json())
-      .then((data) => setCartItems(data))
-      .catch((error) => console.log(error));
-  }, [user._id]);
+    if (currentUser && currentUser?._id) {
+      fetch(`http://localhost:4000/getCartItems/${currentUser?._id}`, {
+        method: "GET",
+      })
+        .then((res) => res.json())
+        .then((data) => setCartItems(data))
+        .catch((error) => console.log(error));
+    }
+  }, [currentUser]);
 
   const updateCartItem = (productId, quantity) => {
     fetch("http://localhost:4000/updateCartItem", {
@@ -35,18 +58,15 @@ export default function QuantityEdit() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        userId: user._id,
+        userId: currentUser._id,
         productId,
         quantity,
       }),
     })
       .then((res) => res.json())
       .then((updatedItem) => {
-        setCartItems((prevItems) =>
-          prevItems.map((item) =>
-            item._id === updatedItem._id ? updatedItem : item
-          )
-        );
+        debugger;
+        setCartItems(updatedItem);
       })
       .catch((error) => console.log(error));
   };
@@ -58,7 +78,7 @@ export default function QuantityEdit() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        userId: user._id,
+        userId: currentUser._id,
         productId,
       }),
     })
@@ -174,7 +194,9 @@ export default function QuantityEdit() {
                           </MDBCol>
                           <MDBCol md="3" lg="2" xl="2" className="text-end">
                             <MDBTypography tag="h6" className="mb-0">
-                              price = ₹{item.productId.price * item.quantity}
+                              price = ₹
+                              {parseInt(item.productId.price) *
+                                parseInt(item.quantity)}
                             </MDBTypography>
                           </MDBCol>
                           <MDBCol md="1" lg="1" xl="1" className="text-end">
