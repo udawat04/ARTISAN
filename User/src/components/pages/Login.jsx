@@ -60,7 +60,7 @@ const Login = () => {
           <div className="absolute inset-0">
             <img
               className="h-full w-full rounded-md object-cover object-top"
-              src="https://images.unsplash.com/photo-1534120247760-c44c3e4a62f1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTk0fHxkZXNpZ25lcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=800&q=60"
+              src={`${process.env.PUBLIC_URL}/image/logo1.png`}
               alt=""
             />
           </div>

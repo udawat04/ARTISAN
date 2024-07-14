@@ -3,7 +3,7 @@ const express = require("express");
 const multer = require("multer");
 const path = require("path");
 const { adminController, categoryController, productController, subcategoryController, cartController, wishlistController } = require("../Admin/controller");
-const { registerController, loginController, userController } = require("../User/controller");
+const { registerController, loginController, userController, paymentController } = require("../User/controller");
 const auth = require("../middleware/auth");
 
 const router = express.Router();
@@ -107,5 +107,8 @@ router.delete("/removeCartItem", cartController.removeCartItem);
 router.post("/addToWishlist", wishlistController.addToWishlist);
 router.post("/removeFromWishlist", wishlistController.removeFromWishlist);
 router.get("/getWishlist/:userId", wishlistController.getWishlist);
+
+router.post("/create-order", paymentController.creatOrder);
+router.post("/verify-order", paymentController.verifyOrder);
 
 module.exports = router;

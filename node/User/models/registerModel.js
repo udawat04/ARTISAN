@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const registerModel = new Schema (
     {
         fullname:{type:String},
-        mobile:{type:String},
+        mobile:{type:Number},
         email:{type:String},
         password:{type:String}
     },

@@ -118,12 +118,12 @@ export default function Wishlist() {
                         </th>
                         <td className="align-middle">
                           <p className="mb-0" style={{ fontWeight: "500" }}>
-                            {item.category}
+                            {item.productId.producttype}
                           </p>
                         </td>
                         <td className="align-middle">
                           <p className="mb-0" style={{ fontWeight: "500" }}>
-                            ${item.price}
+                            ${item.productId.price}
                           </p>
                         </td>
                         <td className="align-middle">

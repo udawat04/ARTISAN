@@ -109,8 +109,12 @@ const Products = () => {
           {products.map((item) => (
             <Col key={item._id} sm={12} md={6} lg={4} xl={3} className="mb-4">
               <Card>
-                <Card.Img variant="top" src="/image/toys/t1.png" />
-                <Card.Body>
+                <Card.Img
+                  variant="top"
+                  src={item.prodimage}
+                  style={{ height: "400px" }}
+                />
+                <Card.Body style={{ height: "250px" }}>
                   <Card.Title>{item.name}</Card.Title>
                   <Card.Text>${item.price}</Card.Text>
                   <Card.Text>Category: {item.category?.category}</Card.Text>
