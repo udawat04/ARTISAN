@@ -1,19 +1,87 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Container, Row, Col, Button, Card } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { MDBIcon } from "mdb-react-ui-kit";
 
-const images = [
-  "/image/sticks/s1.png", // Main image
-  "/image/sticks/s2.png", //Thumbnail 1
-  "/image/sticks/s4.png", //Thumbnail 2
-  "/image/sticks/s3.png", //Thumbnail 3
-  "/image/sticks/s5.png", //Thumbnail 4
-];
+// const images = [
+//   "/image/sticks/s1.png", // Main image
+//   "/image/sticks/s2.png", //Thumbnail 1
+//   "/image/sticks/s4.png", //Thumbnail 2
+//   "/image/sticks/s3.png", //Thumbnail 3
+//   "/image/sticks/s5.png", //Thumbnail 4
+// ];
 
+
+ 
 const ProductDetail = () => {
-  const [mainImage, setMainImage] = useState(images[0]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedImage,setSelectedImage] =useState("");
+   const { user } = useAuth();
+   const [cart, setCart] = useState([]);
+let { id } = useParams();
+  useEffect(() => {
+    fetch(`http://localhost:4000/product/call/${id}`, {
+      method: "GET",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setCategories(data);
+   
+      
+        if (data.length > 0) {
+          setSelectedCategory(data[0]); // Select the first category by default
+          setSelectedImage(data[0].prodimage);
+        }
+        console.log("Categories:", data);
+      })
+      .catch((error) => console.log(error));
 
+
+  }, [id]);
+
+  const handleThumbnailClick =(image)=>{
+    setSelectedImage(image)
+  }
+
+  useEffect(() => {
+   if (user && user?._id) {
+     fetch(`http://localhost:4000/getCartItems/${user._id}`, {
+       method: "GET",
+     })
+       .then((res) => res.json())
+       .then((data) => setCart(data))
+       .catch((error) => console.log(error));
+   }
+  },[user])
+
+   const handleAddToCart = (productId) => {
+     fetch("http://localhost:4000/addToCart", {
+       method: "POST",
+       headers: {
+         "Content-Type": "application/json",
+       },
+       body: JSON.stringify({
+         userId: user._id,
+         productId,
+         quantity: 1,
+       }),
+     })
+       .then((res) => res.json())
+       .then((data) => {
+         setCart([...cart, data]);
+       })
+       .catch((error) => console.log(error));
+   };
+
+   const isProductInCart = (productId) => {
+     return cart.some((item) => item.productId._id === productId);
+   };
+  
   return (
     <Container className="py-5">
       <div className="p-0 position-relative mt-n4 mx-5 z-index-2">
@@ -40,19 +108,40 @@ const ProductDetail = () => {
             <div className="product-image-container">
               <div className="product-image">
                 <div className="zoom-container">
-                  <img src={mainImage} alt="Product" />
+                  {selectedCategory && (
+                    <img
+                      src={`http://localhost:4000${selectedImage}`}
+                      alt="Product"
+                    />
+                  )}
                 </div>
               </div>
               <div className="thumbnail-gallery">
-                {images.map((image, index) => (
-                  <img
-                    key={index}
-                    src={image}
-                    alt={`Thumbnail ${index + 1}`}
-                    onClick={() => setMainImage(image)}
-                    className={image === mainImage ? "active" : ""}
-                  />
-                ))}
+                {selectedCategory && (
+                  <>
+                    <img
+                      src={`http://localhost:4000${selectedCategory.prodimage}`}
+                      alt="Main Thumbnail"
+                      onClick={() =>
+                        handleThumbnailClick(selectedCategory.prodimage)
+                      }
+                      className={
+                        selectedCategory.prodimage === selectedImage
+                          ? "active"
+                          : ""
+                      }
+                    />
+                    {selectedCategory.slider.map((image, index) => (
+                      <img
+                        key={index}
+                        src={`http://localhost:4000${image}`}
+                        alt={`Thumbnail ${index + 1}`}
+                        onClick={() => handleThumbnailClick(image)}
+                        className={image === selectedImage ? "active" : ""}
+                      />
+                    ))}
+                  </>
+                )}
               </div>
             </div>
             <div className="product-details"></div>
@@ -63,7 +152,8 @@ const ProductDetail = () => {
             <Card.Body>
               <Card.Subtitle className="mb-2 text-muted">PHOOL</Card.Subtitle>
               <Card.Title className="mb-3">
-                PHOOL AYODHYA SOUMYA CHANDAN INCENSE STICKS
+                {categories.length > 0 && categories[0].name}
+                <br />
               </Card.Title>
               <Row className="mb-4">
                 <Col>
@@ -129,12 +219,26 @@ const ProductDetail = () => {
 
               <Row className="align-items-center">
                 <Col>
-                  <h4 className="mb-0">$58.00</h4>
+                  <h4 className="mb-0">
+                    ${categories.length > 0 && categories[0].price}
+                  </h4>
                 </Col>
                 <Col className="d-flex justify-content-end">
-                  <Button variant="warning" className="me-2">
-                    Add to Cart
-                  </Button>
+                  {categories.length > 0 &&
+                  isProductInCart(categories[0]._id) ? (
+                    <Button className="btn btn-success mx-2">
+                      <MDBIcon fas icon="check" /> In Cart
+                    </Button>
+                  ) : (
+                    <Link to="/ShoppingCart">
+                      <Button
+                        onClick={() => handleAddToCart(categories[0]._id)}
+                        className="btn btn-warning mx-2"
+                      >
+                        <MDBIcon fas icon="cart-plus" /> Add to Cart
+                      </Button>
+                    </Link>
+                  )}
                   <Button
                     variant="outline-secondary"
                     className="rounded-circle p-0"

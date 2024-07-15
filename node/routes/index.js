@@ -38,7 +38,11 @@ const uploadsubcategory = multer({ storage: subcategoryImage });
 
 const productImage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "upload/product/image");
+    if (file.fieldname === "prodimage") {
+      cb(null, path.join(__dirname, "../upload/category/prodimage/"));
+    } else if (file.fieldname === "slider") {
+      cb(null, path.join(__dirname, "../upload/category/slider/"));
+    }
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
@@ -70,13 +74,14 @@ router.get("/category/sub", categoryController.getCatWithSubCats);
 
 
 router.post(
-  "/products/add",
-  uploadproduct.single("prodimage"),
+  "/product",
+  uploadproduct.fields([{ name: "prodimage" }, { name: "slider" }]),
   productController.store
 );
 router.get("/products", productController.index);
 router.delete("/products/delete/:id", productController.delete);
 router.get("/products/:id", productController.findbycategory);
+router.get("/product/call/:id", productController.storing);
 
 
 router.post(

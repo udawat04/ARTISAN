@@ -39,9 +39,11 @@ export default function QuantityEdit() {
       const data = await getCurrentUser();
       setCurrentUser(data);
       console.log("data",data)
+      
     }
     getUser();
   }, []);
+  console.log("current", currentUser);
     const [cartItems, setCartItems] = useState([]);
 
 
@@ -216,7 +218,7 @@ export default function QuantityEdit() {
                         >
                           <MDBCol md="2" lg="2" xl="2">
                             <MDBCardImage
-                              src={item.productId.prodimage}
+                              src={`http://localhost:4000${item.productId.prodimage}`}
                               fluid
                               className="rounded-3"
                               alt={item.name}

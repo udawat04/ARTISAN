@@ -71,7 +71,7 @@ const Orders = () => {
       headerText: "Image",
       template: ({ prodimage }) => (
         <img
-          src={prodimage}
+          src={`http://localhost:4000${prodimage}`}
           alt="category"
           style={{ width: 100, height: 100, marginLeft: 20 }}
           className="rounded"

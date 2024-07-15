@@ -12,9 +12,9 @@ const productSchema = new Schema(
 
     prodimage: {
       type: String,
-      get: (prodimage) => {
-        return `${BASE_URL}${prodimage}`;
-      },
+    },
+    slider:{
+      type:[String],
     },
   },
   {

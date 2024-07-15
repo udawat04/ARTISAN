@@ -59,11 +59,11 @@ function App() {
             />
             <Route path="/signup" element={<Signup />} />
             {/* <Route element={<ProtectedRoute />}> */}
-              <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/wishlist" element={<Wishlist />} />
             {/* </Route> */}
 
             <Route path="/products" element={<Products />} />
-            <Route path="/productdetail" element={<ProductDetail />} />
+            <Route path="/ProductDetail/:id" element={<ProductDetail />} />
             <Route path="/ContactUs" element={<ContactUs />} />
             <Route path="/Madhubani" element={<Madhubani />} />
             <Route path="/subcat/products/:id" element={<ViewProduct />} />

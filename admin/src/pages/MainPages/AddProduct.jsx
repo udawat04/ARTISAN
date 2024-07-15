@@ -1,19 +1,17 @@
-import React, { useState } from "react";
-
-import "../form.css"
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
+import "../form.css";
 
 const AddProduct = () => {
-   const navigate = useNavigate();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-  category:"",
-  subcategory:"",
-  name:"",
-  price:"",
-  producttype:"",
-  prodimage:"",
+    category: "",
+    subcategory: "",
+    name: "",
+    price: "",
+    producttype: "",
+    prodimage: "",
+    slider: [], 
   });
 
   const [category, setCategory] = useState([]);
@@ -26,12 +24,10 @@ const AddProduct = () => {
         console.log("first", data);
         setCategory(data);
       })
-
       .catch((error) => console.log(error));
   }, []);
 
-  const [subcategory, setsubCategory] = useState([]);
- 
+  const [subcategory, setSubCategory] = useState([]);
 
   const fetchSubcategories = (id) => {
     fetch(`http://localhost:4000/sub/${id}`, {
@@ -40,7 +36,7 @@ const AddProduct = () => {
       .then((res) => res.json())
       .then((data) => {
         console.log("Subcategories:", data);
-        setsubCategory(data);
+        setSubCategory(data);
       })
       .catch((error) => console.log(error));
   };
@@ -51,51 +47,70 @@ const AddProduct = () => {
       ...formData,
       [name]: value,
     });
-     if (name === "category") {
-       fetchSubcategories(value);
-     }
+    if (name === "category") {
+      fetchSubcategories(value);
+    }
   };
 
-   const handleImage = (ev) => {
-     if (ev.target.files) {
-       setFormData({
-         ...formData,
-         prodimage: ev.target.files[0],
-       });
-     }
-   };
+  const handleImage = (ev) => {
+    if (ev.target.name === "prodimage" && ev.target.files.length > 0) {
+      setFormData({
+        ...formData,
+        prodimage: ev.target.files[0],
+      });
+    }
+  };
+
+  const handleSliderImages = (ev) => {
+    if (ev.target.name === "slider" && ev.target.files.length > 0) {
+      setFormData({
+        ...formData,
+        slider: Array.from(ev.target.files), 
+      });
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Product data:", formData);
-     if (formData.category && formData.subcategory && formData.name && formData.price && formData.producttype && formData.prodimage)  {
-       console.log(formData);
-       const form = new FormData();
-       form.append("category",formData.category);
-       form.append("subcategory",formData.subcategory);
-       form.append("name",formData.name);
-       form.append("price",formData.price);
-       form.append("producttype",formData.producttype);
-       form.append("prodimage",formData.prodimage);
+    if (
+      formData.category &&
+      formData.subcategory &&
+      formData.name &&
+      formData.price &&
+      formData.producttype &&
+      formData.prodimage
+    ) {
+      console.log(formData);
+      const form = new FormData();
+      form.append("category", formData.category);
+      form.append("subcategory", formData.subcategory);
+      form.append("name", formData.name);
+      form.append("price", formData.price);
+      form.append("producttype", formData.producttype);
+      form.append("prodimage", formData.prodimage);
+      formData.slider.forEach((image, index) => {
+        form.append(`slider`, image); 
+      });
 
-        fetch("http://localhost:4000/products/add", {
-          method: "POST",
-          body: form,
+      fetch("http://localhost:4000/product", {
+        method: "POST",
+        body: form,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("Data received:", data);
+          if (data) {
+            console.log("object", data);
+            navigate("/view/products");
+          } else {
+            alert(data.error || "unknown");
+          }
         })
-          .then((res) => res.json())
-          .then((data) => {
-            console.log("Data received:", data);
-            if (data) {
-              console.log("object", data);
-              navigate("/view/products");
-            } else {
-              alert(data.error || "unkown");
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-     }
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   return (
@@ -108,12 +123,9 @@ const AddProduct = () => {
                 <h3>Add SubCategory</h3>
               </td>
             </tr>
-
             <tr>
               <td>Category</td>
-
               <td>
-                {/* <input type="text" name="category" onChange={handleInput} /> */}
                 <select
                   name="category"
                   value={formData.category}
@@ -128,18 +140,15 @@ const AddProduct = () => {
                 </select>
               </td>
             </tr>
-
             <tr>
-              <td>sub Category</td>
-
+              <td>Sub Category</td>
               <td>
-                {/* <input type="text" name="category" onChange={handleInput} /> */}
                 <select
                   name="subcategory"
                   value={formData.subcategory}
                   onChange={handleChange}
                 >
-                  <option value="">Select subCategory</option>
+                  <option value="">Select SubCategory</option>
                   {subcategory.map((subcategory) => (
                     <option key={subcategory._id} value={subcategory._id}>
                       {subcategory.subcategory}
@@ -148,35 +157,41 @@ const AddProduct = () => {
                 </select>
               </td>
             </tr>
-
             <tr>
-              <td>name</td>
+              <td>Name</td>
               <td>
                 <input type="text" name="name" onChange={handleChange} />
               </td>
             </tr>
-
             <tr>
-              <td>price</td>
+              <td>Price</td>
               <td>
                 <input type="text" name="price" onChange={handleChange} />
               </td>
             </tr>
-
             <tr>
-              <td>product type</td>
+              <td>Product Type</td>
               <td>
                 <input type="text" name="producttype" onChange={handleChange} />
               </td>
             </tr>
-
             <tr>
               <td>Image</td>
               <td style={{ paddingLeft: "10px" }}>
-                <input type="file" name="image" onChange={handleImage} />
+                <input type="file" name="prodimage" onChange={handleImage} />
               </td>
             </tr>
-
+            <tr>
+              <td>Slider Images</td>
+              <td style={{ paddingLeft: "10px" }}>
+                <input
+                  type="file"
+                  multiple
+                  name="slider"
+                  onChange={handleSliderImages}
+                />
+              </td>
+            </tr>
             <tr>
               <td colSpan={2}>
                 <button className="btn1" type="submit" value="Save">

@@ -7,7 +7,6 @@ import {
   MDBTable,
   MDBTableBody,
   MDBTableHead,
-  MDBTooltip,
   MDBIcon,
 } from "mdb-react-ui-kit";
 import { useAuth } from "../../context/AuthContext";
@@ -19,16 +18,12 @@ export default function Wishlist() {
   const [currentUser, setCurrentUser] = useState([]);
 
   useEffect(() => {
-    // Fetch wishlist items from the backend
-    fetch(`http://localhost:4000/user/profile`, {
-      method: "GET",
-      headers: {
-        authorization: `Beader ${localStorage.getItem("accessToken")}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => setCurrentUser(data.user))
-      .catch((error) => console.log("Error fetching wishlist:", error));
+    async function getUser() {
+      const data = await getCurrentUser();
+      setCurrentUser(data);
+      console.log("data", data);
+    }
+    getUser();
   }, []);
 
   useEffect(() => {
@@ -102,11 +97,11 @@ export default function Wishlist() {
                         <th scope="row">
                           <div className="d-flex align-items-center">
                             <img
-                              src={item.productId.prodimage}
+                              src={`http://localhost:4000${item.productId.prodimage}`}
                               fluid
                               className="rounded-3"
                               style={{ width: "120px" }}
-                              alt={item.productId.name}
+                              alt=""
                             />
                             <div className="flex-column ms-4">
                               <p className="mb-2">
@@ -127,21 +122,17 @@ export default function Wishlist() {
                           </p>
                         </td>
                         <td className="align-middle">
-                          <MDBTooltip
-                            wrapperProps={{ size: "sm" }}
-                            wrapperClass="me-1 mb-2 btn btn-warning"
-                            title="Remove item"
-                          >
-                            <a
-                              href="#!"
-                              className="text-muted"
-                              onClick={() =>
-                                handleRemoveFromWishlist(item.productId._id)
-                              }
+                          <a
+                            href="#!"
+                            className="text-muted"
+                            onClick={() =>
+                              handleRemoveFromWishlist(item.productId._id)
+                            }
                             >
+                         
                               <MDBIcon fas icon="trash" />
+                         
                             </a>
-                          </MDBTooltip>
                         </td>
                       </tr>
                     ))}
